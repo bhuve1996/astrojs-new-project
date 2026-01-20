@@ -1,0 +1,101 @@
+---
+// Continuous infinite image carousel
+import { siteConfig, getImagePath } from '../config/site';
+
+// Get all space images from homepage sections with error handling
+let carouselImages: string[] = [];
+try {
+  const heroImage = siteConfig?.homepage?.hero?.backgroundImage;
+  const sectionImages = siteConfig?.homepage?.sections
+    ?.filter(s => s?.backgroundImage)
+    .map(s => s.backgroundImage)
+    .filter((image): image is string => Boolean(image)) || [];
+  
+  carouselImages = [
+    ...(heroImage ? [heroImage] : []),
+    ...sectionImages,
+  ].filter((image): image is string => Boolean(image));
+} catch (error) {
+  console.error('Error loading carousel images:', error);
+  carouselImages = [];
+}
+
+// Calculate animation duration (10 seconds per image for smooth slow movement)
+// Fallback to default if no images
+const animationDuration = carouselImages.length > 0 ? carouselImages.length * 10 : 80;
+---
+
+{carouselImages.length > 0 && (
+  <div class="image-carousel">
+    <div class="carousel-track" style={`--duration: ${animationDuration}s`}>
+      <!-- First set of images -->
+      {
+        carouselImages.map((image) => (
+          <div class="carousel-slide">
+            <img src={getImagePath(image)} alt="Space" loading="lazy" />
+          </div>
+        ))
+      }
+      <!-- Duplicate set for seamless loop -->
+      {
+        carouselImages.map((image) => (
+          <div class="carousel-slide">
+            <img src={getImagePath(image)} alt="Space" loading="lazy" />
+          </div>
+        ))
+      }
+    </div>
+  </div>
+)}
+
+<style>
+  .image-carousel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .carousel-track {
+    display: flex;
+    width: fit-content;
+    height: 100%;
+    animation: scroll var(--duration, 80s) linear infinite;
+    will-change: transform;
+  }
+
+  .carousel-slide {
+    flex: 0 0 100vw;
+    width: 100vw;
+    min-width: 100vw;
+    height: 100%;
+    position: relative;
+  }
+
+  .carousel-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.25;
+    filter: blur(3px) brightness(0.7);
+  }
+
+  @keyframes scroll {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  /* Smooth transitions */
+  * {
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+</style>

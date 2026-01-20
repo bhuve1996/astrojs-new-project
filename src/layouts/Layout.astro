@@ -1,0 +1,166 @@
+---
+import Navigation from '../components/Navigation.astro';
+import Footer from '../components/Footer.astro';
+import ImageCarousel from '../components/ImageCarousel.astro';
+import BottomMenu from '../components/BottomMenu.astro';
+import SEO from '../components/SEO.astro';
+import { siteConfig } from '../config/site';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+}
+
+const { title, description, image } = Astro.props;
+const pageDescription = description || siteConfig.description;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <SEO title={title} description={pageDescription} image={image} />
+  </head>
+      <body>
+        <ImageCarousel />
+        <Navigation />
+        <div class="scroll-container">
+          <slot />
+          <Footer />
+        </div>
+        <BottomMenu />
+        <script is:inline>
+          // Non-intrusive scroll snapping - allows normal scrolling, snaps on scroll end
+          (function() {
+            function initScrollSnap() {
+              const scrollContainer = document.querySelector('.scroll-container');
+              if (!scrollContainer) return;
+
+              let snapTimeout = null;
+              let isUserScrolling = false;
+
+              function getSections() {
+                const sections = Array.from(scrollContainer.querySelectorAll('.scroll-section'));
+                // Also include footer as a snap target
+                const footer = scrollContainer.querySelector('.footer');
+                if (footer) {
+                  sections.push(footer);
+                }
+                return sections;
+              }
+
+              function findNearestSection(scrollTop) {
+                const sections = getSections();
+                if (sections.length === 0) return null;
+
+                let nearest = null;
+                let minDistance = Infinity;
+
+                sections.forEach(function(section) {
+                  const sectionTop = section.offsetTop;
+                  const distance = Math.abs(sectionTop - scrollTop);
+                  
+                  if (distance < minDistance) {
+                    minDistance = distance;
+                    nearest = section;
+                  }
+                });
+
+                return nearest;
+              }
+
+              function snapToNearest() {
+                const sections = getSections();
+                if (sections.length === 0) return;
+
+                const currentScroll = scrollContainer.scrollTop;
+                const nearest = findNearestSection(currentScroll);
+                
+                if (nearest) {
+                  const targetTop = nearest.offsetTop;
+                  const distance = Math.abs(currentScroll - targetTop);
+                  
+                  // Only snap if we're significantly off (more than 100px)
+                  if (distance > 100) {
+                    scrollContainer.scrollTo({
+                      top: targetTop,
+                      behavior: 'smooth',
+                    });
+                  }
+                }
+              }
+
+              // Track user scrolling
+              scrollContainer.addEventListener('scroll', function() {
+                isUserScrolling = true;
+                
+                clearTimeout(snapTimeout);
+                
+                // Snap to nearest section after user stops scrolling
+                snapTimeout = window.setTimeout(function() {
+                  isUserScrolling = false;
+                  snapToNearest();
+                }, 300);
+              });
+
+              // Keyboard navigation - only for arrow keys
+              document.addEventListener('keydown', function(e) {
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+                
+                const sections = getSections();
+                if (sections.length === 0) return;
+
+                const currentScroll = scrollContainer.scrollTop;
+                const nearest = findNearestSection(currentScroll);
+                const currentIndex = sections.indexOf(nearest);
+
+                if (e.key === 'ArrowDown' || e.key === 'PageDown') {
+                  e.preventDefault();
+                  if (currentIndex < sections.length - 1) {
+                    const nextSection = sections[currentIndex + 1];
+                    scrollContainer.scrollTo({
+                      top: nextSection.offsetTop,
+                      behavior: 'smooth',
+                    });
+                  } else {
+                    // If at last section, scroll to footer
+                    const footer = scrollContainer.querySelector('.footer');
+                    if (footer) {
+                      scrollContainer.scrollTo({
+                        top: footer.offsetTop,
+                        behavior: 'smooth',
+                      });
+                    }
+                  }
+                } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+                  e.preventDefault();
+                  if (currentIndex > 0) {
+                    scrollContainer.scrollTo({
+                      top: sections[currentIndex - 1].offsetTop,
+                      behavior: 'smooth',
+                    });
+                  }
+                }
+              });
+            }
+
+            // Initialize when ready
+            if (document.readyState === 'loading') {
+              document.addEventListener('DOMContentLoaded', initScrollSnap);
+            } else {
+              initScrollSnap();
+            }
+          })();
+        </script>
+      </body>
+</html>

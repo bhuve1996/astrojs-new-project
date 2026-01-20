@@ -1,0 +1,87 @@
+---
+import { siteConfig } from '../config/site';
+---
+
+<nav class="navigation">
+  <div class="nav-container">
+    <a href="/" class="logo" aria-label={siteConfig.logo.alt || siteConfig.name}>
+      {siteConfig.logo.type === 'svg' ? (
+        <Fragment set:html={siteConfig.logo.svg} />
+      ) : (
+        <img
+          src={siteConfig.logo.image}
+          alt={siteConfig.logo.alt}
+          width={siteConfig.logo.width}
+          height={siteConfig.logo.height}
+        />
+      )}
+    </a>
+  </div>
+</nav>
+
+<script>
+  // Animate nav on scroll
+  const nav = document.querySelector('.navigation');
+  window.addEventListener('scroll', () => {
+    const currentScroll = window.pageYOffset;
+    if (nav) {
+      if (currentScroll > 100) {
+        nav.classList.add('scrolled');
+      } else {
+        nav.classList.remove('scrolled');
+      }
+    }
+  });
+</script>
+
+<style>
+  .navigation {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: transparent;
+    backdrop-filter: none;
+    transition: all 0.3s ease;
+  }
+
+  .navigation.scrolled {
+    background: rgba(10, 14, 26, 0.3);
+    backdrop-filter: blur(10px);
+  }
+
+  .nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+  }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        transition: transform 0.3s ease;
+        width: 32px;
+        height: 32px;
+      }
+
+      .logo svg {
+        width: 100%;
+        height: 100%;
+        transition: transform 0.3s ease;
+      }
+
+      .logo:hover {
+        transform: scale(1.1);
+      }
+
+      .logo:hover svg {
+        transform: rotate(15deg);
+      }
+
+</style>

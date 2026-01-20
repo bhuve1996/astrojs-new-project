@@ -1,0 +1,133 @@
+---
+// Magnetic Card - Follows mouse movement
+interface Props {
+  title?: string;
+  content?: string;
+  image?: string;
+}
+
+const { title = 'Magnetic Card', content = 'Move your mouse over me!', image = '' } = Astro.props;
+---
+
+<div class="magnetic-card" id="magnetic-card">
+  {
+    image && (
+      <div class="magnetic-image">
+        <img src={image} alt={title} />
+      </div>
+    )
+  }
+  <div class="magnetic-content">
+    <h3>{title}</h3>
+    <p>{content}</p>
+  </div>
+  <div class="magnetic-glow"></div>
+</div>
+
+<script>
+  const card = document.getElementById('magnetic-card');
+
+  if (card) {
+    const maxTilt = 15;
+    const maxMove = 20;
+
+    card.addEventListener('mousemove', e => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+
+      const moveX = (x - centerX) / centerX;
+      const moveY = (y - centerY) / centerY;
+
+      const rotateX = moveY * maxTilt;
+      const rotateY = -moveX * maxTilt;
+      const translateX = moveX * maxMove;
+      const translateY = moveY * maxMove;
+
+      (card as HTMLElement).style.transform = `
+        perspective(1000px)
+        rotateX(${rotateX}deg)
+        rotateY(${rotateY}deg)
+        translateX(${translateX}px)
+        translateY(${translateY}px)
+      `;
+
+      // Glow effect
+      const glow = card.querySelector('.magnetic-glow') as HTMLElement | null;
+      if (glow) {
+        glow.style.opacity = '1';
+        glow.style.left = `${x - rect.left}px`;
+        glow.style.top = `${y - rect.top}px`;
+      }
+    });
+
+    card.addEventListener('mouseleave', () => {
+      (card as HTMLElement).style.transform =
+        'perspective(1000px) rotateX(0) rotateY(0) translateX(0) translateY(0)';
+      const glow = card.querySelector('.magnetic-glow') as HTMLElement | null;
+      if (glow) {
+        glow.style.opacity = '0';
+      }
+    });
+  }
+</script>
+
+<style>
+  .magnetic-card {
+    width: 100%;
+    height: 350px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.1s ease-out;
+    cursor: pointer;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  }
+
+  .magnetic-glow {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(102, 126, 234, 0.4), transparent);
+    border-radius: 50%;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    transform: translate(-50%, -50%);
+    filter: blur(40px);
+  }
+
+  .magnetic-image {
+    width: 100%;
+    height: 60%;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+  }
+
+  .magnetic-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .magnetic-content h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+  }
+
+  .magnetic-content p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.6;
+  }
+</style>

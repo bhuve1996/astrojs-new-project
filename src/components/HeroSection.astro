@@ -1,0 +1,81 @@
+---
+// Reusable Hero Section Component - DRY Principle
+import ScrollSection from './ScrollSection.astro';
+import TextReveal from './TextReveal.astro';
+import { getImagePath } from '../config/site';
+
+interface Props {
+  id?: string;
+  title: string;
+  subtitle?: string;
+  backgroundImage?: string;
+  backgroundColor?: string;
+  stickyBackground?: boolean;
+  scrollText?: string;
+}
+
+const {
+  id = 'hero',
+  title,
+  subtitle = '',
+  backgroundImage = '',
+  backgroundColor = '#0a0e1a',
+  stickyBackground = true,
+  scrollText = '',
+} = Astro.props;
+---
+
+<ScrollSection
+  id={id}
+  backgroundImage={backgroundImage ? getImagePath(backgroundImage) : undefined}
+  backgroundColor={backgroundColor}
+  stickyBackground={stickyBackground}
+>
+  <TextReveal delay={0}>
+    <h1 class="hero-title">{title}</h1>
+  </TextReveal>
+  {subtitle && (
+    <TextReveal delay={200}>
+      <p class="hero-subtitle">{subtitle}</p>
+    </TextReveal>
+  )}
+  {scrollText && (
+    <TextReveal delay={400}>
+      <div class="scroll-indicator">
+        <span>{scrollText}</span>
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path d="M12 5v14M19 12l-7 7-7-7"></path>
+        </svg>
+      </div>
+    </TextReveal>
+  )}
+</ScrollSection>
+
+<style>
+  .scroll-indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+    animation: bounce 2s infinite;
+  }
+
+  @keyframes bounce {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(10px);
+    }
+  }
+</style>

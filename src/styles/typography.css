@@ -1,0 +1,46 @@
+/* Shared Typography Styles - DRY Principle */
+
+/* Hero/Page Titles */
+.hero-title,
+.page-title {
+  font-size: clamp(3rem, 8vw, 6rem);
+  font-weight: 800;
+  margin: 0 0 1.5rem 0;
+  background: var(--gradient-extended);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.1;
+}
+
+/* Hero/Page Subtitles */
+.hero-subtitle,
+.page-subtitle {
+  font-size: clamp(1.2rem, 3vw, 1.8rem);
+  color: var(--color-text-secondary);
+  margin: 0 0 3rem 0;
+  font-weight: 300;
+}
+
+.page-subtitle {
+  margin: 0 0 1.5rem 0;
+}
+
+/* Section Titles */
+.section-title {
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  font-weight: 700;
+  margin: 0 0 1.5rem 0;
+  color: var(--color-text-primary);
+  line-height: 1.2;
+}
+
+/* Section Text */
+.section-text {
+  font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+  color: var(--color-text-secondary);
+  line-height: 1.8;
+  max-width: 800px;
+  margin: 0 auto;
+  font-weight: 300;
+}

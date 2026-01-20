@@ -1,0 +1,145 @@
+---
+import Layout from '../layouts/Layout.astro';
+import HeroSection from '../components/HeroSection.astro';
+import ScrollSection from '../components/ScrollSection.astro';
+import TextReveal from '../components/TextReveal.astro';
+import { siteConfig } from '../config/site';
+---
+
+<Layout title={siteConfig.contact.hero.title} description={siteConfig.contact.info.text}>
+  <main class="scroll-container">
+    <HeroSection
+      id="contact-hero"
+      title={siteConfig.contact.hero.title}
+      subtitle={siteConfig.contact.hero.subtitle}
+      backgroundImage={siteConfig.contact.hero.backgroundImage}
+    />
+
+    <ScrollSection id="contact-form" backgroundColor="#1a1f2e">
+      <div class="contact-container">
+        <div class="contact-info">
+          <TextReveal delay={0}>
+            <h2 class="section-title">{siteConfig.contact.info.title}</h2>
+          </TextReveal>
+          <TextReveal delay={100}>
+            <p class="section-text">{siteConfig.contact.info.text}</p>
+          </TextReveal>
+          <TextReveal delay={200}>
+            <div class="contact-details">
+              <div class="contact-item">
+                <strong>Email</strong>
+                <a href={`mailto:${siteConfig.contact.email}`}>{siteConfig.contact.email}</a>
+              </div>
+              <div class="contact-item">
+                <strong>Phone</strong>
+                <a href={`tel:${siteConfig.contact.phone}`}>{siteConfig.contact.phone}</a>
+              </div>
+              <div class="contact-item">
+                <strong>Address</strong>
+                <address>{siteConfig.contact.address}</address>
+              </div>
+            </div>
+          </TextReveal>
+        </div>
+
+        <form class="contact-form" id="contact-form-element">
+          <TextReveal delay={300}>
+            <div class="form-group">
+              <label for="name">Name</label>
+              <input type="text" id="name" name="name" required />
+            </div>
+          </TextReveal>
+          <TextReveal delay={400}>
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" id="email" name="email" required />
+            </div>
+          </TextReveal>
+          <TextReveal delay={500}>
+            <div class="form-group">
+              <label for="subject">Subject</label>
+              <input type="text" id="subject" name="subject" required />
+            </div>
+          </TextReveal>
+          <TextReveal delay={600}>
+            <div class="form-group">
+              <label for="message">Message</label>
+              <textarea id="message" name="message" rows="5" required></textarea>
+            </div>
+          </TextReveal>
+          <TextReveal delay={700}>
+            <button type="submit" class="submit-button">Send Message</button>
+          </TextReveal>
+        </form>
+      </div>
+    </ScrollSection>
+  </main>
+</Layout>
+
+<script>
+  const form = document.getElementById('contact-form-element') as HTMLFormElement | null;
+
+  if (form) {
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      alert("Thank you for your message! We'll get back to you soon.");
+      form.reset();
+    });
+  }
+</script>
+
+<style>
+  .contact-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: start;
+  }
+
+  .contact-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .contact-details {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .contact-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .contact-item strong {
+    color: var(--color-primary);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .contact-item a,
+  .contact-item address {
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    font-style: normal;
+  }
+
+  .contact-item a:hover {
+    color: var(--color-primary);
+  }
+
+  /* Form styles are in forms.css */
+
+  @media (max-width: 768px) {
+    .contact-container {
+      grid-template-columns: 1fr;
+      gap: 3rem;
+    }
+  }
+</style>

@@ -1,0 +1,49 @@
+{
+  "name": "astrojs-new",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "type-check": "astro check --tsconfig ./tsconfig.json",
+    "lint": "eslint . --max-warnings 0",
+    "lint:fix": "eslint . --fix && prettier --write .",
+    "lint:full": "eslint . --max-warnings 0 && astro check && prettier --check .",
+    "prepare": "husky install"
+  },
+  "dependencies": {
+    "astro": "^4.0.0",
+    "@astrojs/sitemap": "^3.0.0",
+    "typescript": "^5.9.3"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.6",
+    "@eslint/js": "^9.17.0",
+    "@typescript-eslint/eslint-plugin": "^8.18.2",
+    "@typescript-eslint/parser": "^8.18.2",
+    "eslint": "^9.17.0",
+    "eslint-plugin-astro": "^1.3.1",
+    "prettier": "^3.2.5",
+    "prettier-plugin-astro": "^0.13.0",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.0",
+    "typescript-eslint": "^8.18.2"
+  },
+  "lint-staged": {
+    "*.{astro,js,ts,jsx,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,css,scss,md}": [
+      "prettier --write"
+    ],
+    "*.{ts,tsx,astro}": [
+      "bash -c 'astro check --tsconfig ./tsconfig.json'"
+    ]
+  }
+}

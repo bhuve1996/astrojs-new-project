@@ -1,0 +1,78 @@
+---
+// Vanilla JavaScript animations using Web Animations API
+interface Props {
+  text?: string;
+}
+
+const { text = 'Start' } = Astro.props;
+---
+
+<button class="js-animated-button" id="animated-btn">
+  {text}
+</button>
+
+<script>
+  // Web Animations API - no dependencies needed!
+  const button = document.getElementById('animated-btn');
+
+  if (button) {
+    // Initial entrance animation
+    button.animate(
+      [
+        { opacity: 0, transform: 'translateY(20px) scale(0.9)' },
+        { opacity: 1, transform: 'translateY(0) scale(1)' },
+      ],
+      {
+        duration: 500,
+        easing: 'ease-out',
+        fill: 'forwards',
+      }
+    );
+
+    // Hover animation
+    button.addEventListener('mouseenter', () => {
+      button.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.05)' }], {
+        duration: 200,
+        fill: 'forwards',
+      });
+    });
+
+    button.addEventListener('mouseleave', () => {
+      button.animate([{ transform: 'scale(1.05)' }, { transform: 'scale(1)' }], {
+        duration: 200,
+        fill: 'forwards',
+      });
+    });
+
+    // Click animation
+    button.addEventListener('click', () => {
+      // Bounce effect
+      button.animate(
+        [
+          { transform: 'scale(1)' },
+          { transform: 'scale(0.95)' },
+          { transform: 'scale(1.05)' },
+          { transform: 'scale(1)' },
+        ],
+        {
+          duration: 300,
+          easing: 'ease-out',
+        }
+      );
+    });
+  }
+</script>
+
+<style>
+  .js-animated-button {
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    color: white;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    opacity: 0; /* Start hidden, JS will animate it in */
+  }
+</style>

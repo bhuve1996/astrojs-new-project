@@ -1,0 +1,186 @@
+---
+import Layout from '../layouts/Layout.astro';
+import HeroSection from '../components/HeroSection.astro';
+import ScrollSection from '../components/ScrollSection.astro';
+import { siteConfig } from '../config/site';
+---
+
+<Layout title="Page Not Found" description="The page you're looking for doesn't exist">
+  <main class="scroll-container">
+    <HeroSection
+      id="404-hero"
+      title="404"
+      subtitle="Page Not Found"
+      backgroundImage={siteConfig.homepage.hero.backgroundImage}
+    />
+
+    <ScrollSection id="404-content" backgroundColor="#1a1f2e">
+      <div class="error-container">
+        <div class="error-content">
+          <h2 class="error-title">Oops! Page Not Found</h2>
+          <p class="error-message">
+            The page you're looking for doesn't exist or has been moved.
+          </p>
+          <div class="error-actions">
+            <a href="/" class="error-button error-button-primary">
+              Go to Homepage
+            </a>
+            <a href="/blog" class="error-button">
+              Browse Blog
+            </a>
+          </div>
+          <div class="error-links">
+            <h3>Popular Pages:</h3>
+            <ul>
+              {siteConfig.nav.map((item) => (
+                <li>
+                  <a href={item.href}>{item.label}</a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </ScrollSection>
+  </main>
+</Layout>
+
+<style>
+  .error-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 3rem 2rem;
+    text-align: center;
+  }
+
+  .error-content {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 3rem 2rem;
+    backdrop-filter: blur(10px);
+  }
+
+  .error-title {
+    font-size: 3rem;
+    font-weight: 700;
+    margin: 0 0 1rem;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .error-message {
+    color: var(--color-text-secondary);
+    font-size: 1.2rem;
+    line-height: 1.6;
+    margin: 0 0 2rem;
+  }
+
+  .error-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 3rem;
+  }
+
+  .error-button {
+    padding: 0.75rem 2rem;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: inline-block;
+    border: 2px solid transparent;
+  }
+
+  .error-button-primary {
+    background: var(--gradient-primary);
+    color: white;
+    border-color: transparent;
+  }
+
+  .error-button-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+  }
+
+  .error-button {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--color-text-primary);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .error-button:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(102, 126, 234, 0.5);
+    transform: translateY(-2px);
+  }
+
+  .error-links {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .error-links h3 {
+    color: var(--color-text-primary);
+    font-size: 1.2rem;
+    margin: 0 0 1rem;
+  }
+
+  .error-links ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+  }
+
+  .error-links li {
+    margin: 0;
+  }
+
+  .error-links a {
+    color: var(--color-primary);
+    text-decoration: none;
+    transition: color 0.3s ease;
+    font-weight: 500;
+  }
+
+  .error-links a:hover {
+    color: var(--color-secondary);
+    text-decoration: underline;
+  }
+
+  @media (max-width: 768px) {
+    .error-container {
+      padding: 2rem 1rem;
+    }
+
+    .error-content {
+      padding: 2rem 1.5rem;
+    }
+
+    .error-title {
+      font-size: 2rem;
+    }
+
+    .error-message {
+      font-size: 1rem;
+    }
+
+    .error-actions {
+      flex-direction: column;
+    }
+
+    .error-button {
+      width: 100%;
+      text-align: center;
+    }
+  }
+</style>

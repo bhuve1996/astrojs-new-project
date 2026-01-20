@@ -1,0 +1,122 @@
+---
+// Glitch Text Effect
+interface Props {
+  text?: string;
+  size?: 'small' | 'medium' | 'large';
+}
+
+const { text = 'GLITCH', size = 'medium' } = Astro.props;
+
+const sizeClasses = {
+  small: '1.5rem',
+  medium: '3rem',
+  large: '5rem',
+};
+---
+
+<div class="glitch-text" data-text={text} style={`--size: ${sizeClasses[size]}`}>
+  <span class="glitch-text-main">{text}</span>
+  <span class="glitch-text-shadow" aria-hidden="true">{text}</span>
+  <span class="glitch-text-shadow" aria-hidden="true">{text}</span>
+</div>
+
+<style>
+  .glitch-text {
+    position: relative;
+    display: inline-block;
+    font-weight: 900;
+    font-size: var(--size, 3rem);
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+  }
+
+  .glitch-text-main,
+  .glitch-text-shadow {
+    display: block;
+    position: relative;
+  }
+
+  .glitch-text-shadow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+  }
+
+  .glitch-text-shadow:nth-child(2) {
+    color: #ff0080;
+    animation: glitch-1 0.5s infinite;
+    clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+    transform: translate(-2px, 2px);
+  }
+
+  .glitch-text-shadow:nth-child(3) {
+    color: #00ffff;
+    animation: glitch-2 0.5s infinite;
+    clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
+    transform: translate(2px, -2px);
+  }
+
+  .glitch-text:hover .glitch-text-shadow {
+    opacity: 1;
+  }
+
+  @keyframes glitch-1 {
+    0%,
+    14%,
+    15%,
+    49%,
+    50%,
+    99%,
+    100% {
+      transform: translate(0);
+    }
+    15%,
+    49% {
+      transform: translate(-2px, 2px);
+    }
+  }
+
+  @keyframes glitch-2 {
+    0%,
+    20%,
+    21%,
+    62%,
+    63%,
+    99%,
+    100% {
+      transform: translate(0);
+    }
+    21%,
+    62% {
+      transform: translate(2px, -2px);
+    }
+  }
+
+  .glitch-text:hover .glitch-text-main {
+    animation: glitch-main 0.3s infinite;
+  }
+
+  @keyframes glitch-main {
+    0%,
+    100% {
+      transform: translate(0);
+    }
+    20% {
+      transform: translate(-2px, 2px);
+    }
+    40% {
+      transform: translate(-2px, -2px);
+    }
+    60% {
+      transform: translate(2px, 2px);
+    }
+    80% {
+      transform: translate(2px, -2px);
+    }
+  }
+</style>

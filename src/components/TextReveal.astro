@@ -1,0 +1,52 @@
+---
+// Text reveal animation component
+interface Props {
+  delay?: number;
+  children?: unknown;
+}
+
+const { delay = 0 } = Astro.props;
+---
+
+<div class="text-reveal" data-delay={delay}>
+  <slot />
+</div>
+
+<script>
+  const elements = document.querySelectorAll('.text-reveal');
+
+  const observer = new IntersectionObserver(
+    entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const delay = parseInt(entry.target.getAttribute('data-delay') || '0');
+
+          setTimeout(() => {
+            entry.target.classList.add('revealed');
+          }, delay);
+        }
+      });
+    },
+    {
+      threshold: 0.2,
+      rootMargin: '0px 0px -100px 0px',
+    }
+  );
+
+  elements.forEach(el => observer.observe(el));
+</script>
+
+<style>
+  .text-reveal {
+    opacity: 0;
+    transform: translateY(50px);
+    transition:
+      opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .text-reveal.revealed {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>

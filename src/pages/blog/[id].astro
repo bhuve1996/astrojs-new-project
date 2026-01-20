@@ -1,0 +1,201 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import HeroSection from '../../components/HeroSection.astro';
+import ScrollSection from '../../components/ScrollSection.astro';
+import { siteConfig, getImagePath } from '../../config/site';
+
+// Get the post ID from the URL
+const { id } = Astro.params;
+let postId: number | null = null;
+
+try {
+  postId = id ? parseInt(id, 10) : null;
+  if (isNaN(postId as number)) {
+    postId = null;
+  }
+} catch (error) {
+  postId = null;
+}
+
+// Find the post
+const post = postId ? siteConfig.blog.posts.find(p => p.id === postId) : null;
+
+// If post not found, return 404
+if (!post || !postId) {
+  return Astro.redirect('/404');
+}
+
+// Get full content from config (fallback to excerpt if content not provided)
+const fullContent = post.content || post.excerpt;
+---
+
+<Layout title={post.title} description={post.excerpt}>
+  <main class="scroll-container">
+    <HeroSection
+      id="blog-post-hero"
+      title={post.title}
+      subtitle={`${post.category} • ${new Date(post.date).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      })}`}
+      backgroundImage={post.image}
+    />
+
+    <ScrollSection id="blog-post-content" backgroundColor="#1a1f2e">
+      <article class="blog-post">
+        <div class="blog-post-header">
+          <a href="/blog" class="back-link">{siteConfig.blog.labels.backToBlog}</a>
+          <div class="blog-post-meta">
+            <span class="blog-category">{post.category}</span>
+            <time class="blog-date" datetime={post.date}>
+              {new Date(post.date).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              })}
+            </time>
+          </div>
+        </div>
+
+        {post.image && (
+          <div class="blog-post-image">
+            <img src={getImagePath(post.image)} alt={post.title} />
+          </div>
+        )}
+
+        <div class="blog-post-body" set:html={fullContent} />
+
+        <div class="blog-post-footer">
+          <a href="/blog" class="back-link">{siteConfig.blog.labels.backToBlog}</a>
+        </div>
+      </article>
+    </ScrollSection>
+  </main>
+</Layout>
+
+<style>
+  .blog-post {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 3rem 2rem;
+  }
+
+  .blog-post-header {
+    margin-bottom: 2rem;
+  }
+
+  .back-link {
+    display: inline-block;
+    color: var(--color-primary);
+    text-decoration: none;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    transition: color 0.3s ease;
+  }
+
+  .back-link:hover {
+    color: var(--color-secondary);
+  }
+
+  .blog-post-meta {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .blog-category {
+    background: var(--gradient-primary);
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  .blog-date {
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+  }
+
+  .blog-post-image {
+    width: 100%;
+    max-height: 500px;
+    overflow: hidden;
+    border-radius: 12px;
+    margin: 2rem 0;
+  }
+
+  .blog-post-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .blog-post-body {
+    color: var(--color-text-secondary);
+    line-height: 1.8;
+    font-size: 1.1rem;
+  }
+
+  .blog-post-body h2 {
+    color: var(--color-text-primary);
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 2rem 0 1rem;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .blog-post-body h3 {
+    color: var(--color-text-primary);
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 1.5rem 0 0.75rem;
+  }
+
+  .blog-post-body p {
+    margin: 1rem 0;
+  }
+
+  .blog-post-body ul,
+  .blog-post-body ol {
+    margin: 1rem 0;
+    padding-left: 2rem;
+  }
+
+  .blog-post-body li {
+    margin: 0.5rem 0;
+  }
+
+  .blog-post-body strong {
+    color: var(--color-text-primary);
+    font-weight: 600;
+  }
+
+  .blog-post-footer {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  @media (max-width: 768px) {
+    .blog-post {
+      padding: 2rem 1rem;
+    }
+
+    .blog-post-body {
+      font-size: 1rem;
+    }
+
+    .blog-post-body h2 {
+      font-size: 1.5rem;
+    }
+
+    .blog-post-body h3 {
+      font-size: 1.25rem;
+    }
+  }
+</style>

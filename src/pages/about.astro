@@ -1,0 +1,55 @@
+---
+import Layout from '../layouts/Layout.astro';
+import HeroSection from '../components/HeroSection.astro';
+import ContentSection from '../components/ContentSection.astro';
+import ScrollSection from '../components/ScrollSection.astro';
+import TextReveal from '../components/TextReveal.astro';
+import { siteConfig } from '../config/site';
+---
+
+<Layout
+  title={siteConfig.about.hero.title}
+  description={`Learn more about ${siteConfig.name} - ${siteConfig.about.hero.subtitle}`}
+>
+  <main class="scroll-container">
+    <HeroSection
+      id="about-hero"
+      title={siteConfig.about.hero.title}
+      subtitle={siteConfig.about.hero.subtitle}
+      backgroundImage={siteConfig.about.hero.backgroundImage}
+    />
+
+    <ContentSection
+      id="about-mission"
+      title={siteConfig.about.mission.title}
+      text={siteConfig.about.mission.text}
+      backgroundColor="#1a1f2e"
+    />
+
+    <ContentSection
+      id="about-vision"
+      title={siteConfig.about.vision.title}
+      text={siteConfig.about.vision.text}
+      backgroundImage={siteConfig.about.vision.backgroundImage}
+      stickyBackground={true}
+    />
+
+    <ScrollSection id="about-values" backgroundColor="#0a0e1a">
+      <TextReveal delay={0}>
+        <h2 class="section-title">Our Values</h2>
+      </TextReveal>
+      <div class="values-grid">
+        {
+          siteConfig.about.values.map((value, index) => (
+            <TextReveal delay={(index + 1) * 100}>
+              <div class="value-card">
+                <h3>{value.title}</h3>
+                <p>{value.text}</p>
+              </div>
+            </TextReveal>
+          ))
+        }
+      </div>
+    </ScrollSection>
+  </main>
+</Layout>

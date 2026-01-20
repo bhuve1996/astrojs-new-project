@@ -1,0 +1,69 @@
+---
+import Layout from '../layouts/Layout.astro';
+import HeroSection from '../components/HeroSection.astro';
+import ContentSection from '../components/ContentSection.astro';
+import ComponentSection from '../components/ComponentSection.astro';
+import { siteConfig } from '../config/site';
+---
+
+<Layout title={siteConfig.homepage.hero.title} description={siteConfig.description}>
+  <!-- Hero Section -->
+    <HeroSection
+      id="hero"
+      title={siteConfig.homepage.hero.title}
+      subtitle={siteConfig.homepage.hero.subtitle}
+      backgroundImage={siteConfig.homepage.hero.backgroundImage}
+      scrollText={siteConfig.homepage.hero.scrollText}
+    />
+
+    <!-- Dynamic Sections from Config -->
+    {
+      (siteConfig?.homepage?.sections || []).map((section: any) => {
+        try {
+          // Check if this is a component section
+          if (section?.componentType) {
+            let componentData: any[] = [];
+            
+            // Handle particle buttons separately
+            if (section.componentType === 'particleButton' && section.particleButtons) {
+              componentData = section.particleButtons || [];
+            } else {
+              const componentKey = section.componentType as keyof typeof siteConfig.components;
+              const data = siteConfig?.components?.[componentKey];
+              if (Array.isArray(data)) {
+                componentData = data;
+              }
+            }
+            
+            if (componentData.length > 0) {
+              return (
+                <ComponentSection
+                  id={section?.id || 'component-section'}
+                  title={section?.title || ''}
+                  type={section.componentType}
+                  items={componentData}
+                  backgroundColor={section?.backgroundColor || '#0a0e1a'}
+                />
+              );
+            }
+          }
+          
+          // Regular content section
+          const backgroundColor = section?.backgroundColor || '#0a0e1a';
+          return (
+            <ContentSection
+              id={section?.id || 'content-section'}
+              title={section?.title || ''}
+              text={section?.text || ''}
+              backgroundImage={section?.backgroundImage}
+              backgroundColor={backgroundColor}
+              stickyBackground={section?.stickyBackground || false}
+            />
+          );
+        } catch (error) {
+          console.error('Error rendering section:', error, section);
+          return null;
+        }
+      }).filter(Boolean)
+    }
+</Layout>

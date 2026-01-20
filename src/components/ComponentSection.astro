@@ -1,0 +1,134 @@
+---
+// Component Showcase Section - Renders interactive components
+import ScrollSection from './ScrollSection.astro';
+import TextReveal from './TextReveal.astro';
+import FlipCard from './FlipCard.astro';
+import MagneticCard from './MagneticCard.astro';
+import GlassCard from './GlassCard.astro';
+import TiltCard from './TiltCard.astro';
+import HoverRevealCard from './HoverRevealCard.astro';
+import ParticleButton from './ParticleButton.astro';
+import GlitchText from './GlitchText.astro';
+import { getImagePath } from '../config/site';
+
+interface Props {
+  id?: string;
+  title: string;
+  type: 'flipCards' | 'magneticCards' | 'glassCards' | 'tiltCards' | 'hoverRevealCards' | 'particleButton' | 'glitchText';
+  items: any[];
+  backgroundColor?: string;
+}
+
+const {
+  id = '',
+  title,
+  type,
+  items = [],
+  backgroundColor = '#0a0e1a',
+} = Astro.props;
+---
+
+<ScrollSection id={id} backgroundColor={backgroundColor}>
+  <TextReveal delay={0}>
+    {type === 'glitchText' ? (
+      <GlitchText text={title} size="large" />
+    ) : (
+      <h2 class="section-title">{title}</h2>
+    )}
+  </TextReveal>
+  
+  {type === 'particleButton' && (
+    <TextReveal delay={200}>
+      <p class="section-text">Click the buttons to see particle explosion effect</p>
+    </TextReveal>
+  )}
+
+  <div class={`components-grid ${type === 'particleButton' ? 'button-showcase' : ''}`}>
+    {type === 'flipCards' &&
+      items.map(card => (
+        <FlipCard
+          frontTitle={card.frontTitle}
+          frontContent={card.frontContent}
+          backTitle={card.backTitle}
+          backContent={card.backContent}
+          image={getImagePath(card.image)}
+          flipOn={card.flipOn as 'hover' | 'click' | undefined}
+        />
+      ))}
+    
+    {type === 'magneticCards' &&
+      items.map(card => (
+        <MagneticCard
+          title={card.title}
+          content={card.content}
+          image={getImagePath(card.image)}
+        />
+      ))}
+    
+    {type === 'glassCards' &&
+      items.map(card => (
+        <GlassCard
+          title={card.title}
+          content={card.content}
+          image={getImagePath(card.image)}
+        />
+      ))}
+    
+    {type === 'tiltCards' &&
+      items.map(card => (
+        <TiltCard
+          title={card.title}
+          content={card.content}
+          image={getImagePath(card.image)}
+        />
+      ))}
+    
+    {type === 'hoverRevealCards' &&
+      items.map(card => (
+        <HoverRevealCard
+          title={card.title}
+          content={card.content}
+          revealContent={card.revealContent}
+          image={getImagePath(card.image)}
+        />
+      ))}
+    
+    {type === 'particleButton' &&
+      items.map((button, index) => (
+        <TextReveal delay={index * 100}>
+          <ParticleButton text={button.text} href={button.href} />
+        </TextReveal>
+      ))}
+  </div>
+</ScrollSection>
+
+<style>
+  .components-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 3rem auto 0;
+    padding: 0 2rem;
+  }
+
+  .button-showcase {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    grid-template-columns: unset;
+  }
+
+  @media (max-width: 768px) {
+    .components-grid {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    .button-showcase {
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+</style>

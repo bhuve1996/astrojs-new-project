@@ -1,0 +1,146 @@
+---
+// 3D Flip Card Component
+interface Props {
+  frontTitle?: string;
+  frontContent?: string;
+  backTitle?: string;
+  backContent?: string;
+  image?: string;
+  flipOn?: 'hover' | 'click';
+}
+
+const {
+  frontTitle = 'Front Title',
+  frontContent = 'Hover or click to flip',
+  backTitle = 'Back Title',
+  backContent = 'This is the back side of the card',
+  image = '',
+  flipOn = 'hover',
+} = Astro.props;
+---
+
+<div class="flip-card" data-flip-on={flipOn}>
+  <div class="flip-card-inner">
+    <div class="flip-card-front">
+      {
+        image && (
+          <div class="flip-card-image">
+            <img src={image} alt={frontTitle} />
+          </div>
+        )
+      }
+      <div class="flip-card-content">
+        <h3>{frontTitle}</h3>
+        <p>{frontContent}</p>
+      </div>
+    </div>
+    <div class="flip-card-back">
+      <div class="flip-card-content">
+        <h3>{backTitle}</h3>
+        <p>{backContent}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .flip-card {
+    background-color: transparent;
+    width: 100%;
+    height: 300px;
+    perspective: 1000px;
+    cursor: pointer;
+  }
+
+  .flip-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    transform-style: preserve-3d;
+  }
+
+  .flip-card[data-flip-on='hover']:hover .flip-card-inner,
+  .flip-card[data-flip-on='click'].flipped .flip-card-inner {
+    transform: rotateY(180deg);
+  }
+
+  .flip-card-front,
+  .flip-card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  }
+
+  .flip-card-front {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .flip-card-back {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.9), rgba(118, 75, 162, 0.9));
+    transform: rotateY(180deg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .flip-card-image {
+    width: 100%;
+    height: 60%;
+    overflow: hidden;
+  }
+
+  .flip-card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+  }
+
+  .flip-card:hover .flip-card-image img {
+    transform: scale(1.1);
+  }
+
+  .flip-card-content {
+    padding: 1.5rem;
+    height: 40%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .flip-card-back .flip-card-content {
+    height: 100%;
+  }
+
+  .flip-card-content h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+  }
+
+  .flip-card-content p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.6;
+  }
+</style>
+
+<script>
+  // Handle click flip
+  const flipCards = document.querySelectorAll('.flip-card[data-flip-on="click"]');
+  flipCards.forEach(card => {
+    card.addEventListener('click', () => {
+      card.classList.toggle('flipped');
+    });
+  });
+</script>

@@ -1,0 +1,22 @@
+---
+import Layout from '../layouts/Layout.astro';
+import HeroSection from '../components/HeroSection.astro';
+import ScrollSection from '../components/ScrollSection.astro';
+import FAQ from '../components/FAQ.astro';
+import { siteConfig } from '../config/site';
+---
+
+<Layout title={siteConfig.faq.hero.title} description={siteConfig.faq.hero.subtitle}>
+  <main class="scroll-container">
+    <HeroSection
+      id="faq-hero"
+      title={siteConfig.faq.hero.title}
+      subtitle={siteConfig.faq.hero.subtitle}
+      backgroundImage="https://images.unsplash.com/photo-1446776653964-20c1d3a81b06?w=1920&q=80"
+    />
+
+    <ScrollSection id="faq-content" backgroundColor="#1a1f2e">
+      <FAQ items={siteConfig.faq.items} />
+    </ScrollSection>
+  </main>
+</Layout>

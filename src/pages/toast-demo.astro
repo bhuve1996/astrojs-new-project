@@ -1,0 +1,260 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ScrollSection from '../components/ScrollSection.astro';
+import TextReveal from '../components/TextReveal.astro';
+---
+
+<Layout title="Toast Demo" description="Interactive toast notification demonstrations">
+  <main class="scroll-container">
+    <ScrollSection id="toast-hero" backgroundColor="#0a0e1a">
+      <TextReveal delay={0}>
+        <h1 class="page-title">Toast Notifications</h1>
+      </TextReveal>
+      <TextReveal delay={200}>
+        <p class="page-subtitle">Click the buttons to see different toast types</p>
+      </TextReveal>
+    </ScrollSection>
+
+    <ScrollSection id="toast-examples" backgroundColor="#1a1f2e">
+      <div class="toast-showcase">
+        <TextReveal delay={0}>
+          <div class="toast-example">
+            <h3>Success Toast</h3>
+            <p>Green toast for successful actions</p>
+            <button class="toast-demo-button" data-toast-type="success">
+              Show Success Toast
+            </button>
+          </div>
+        </TextReveal>
+
+        <TextReveal delay={100}>
+          <div class="toast-example">
+            <h3>Error Toast</h3>
+            <p>Red toast for error messages</p>
+            <button class="toast-demo-button" data-toast-type="error"> Show Error Toast </button>
+          </div>
+        </TextReveal>
+
+        <TextReveal delay={200}>
+          <div class="toast-example">
+            <h3>Warning Toast</h3>
+            <p>Yellow toast for warnings</p>
+            <button class="toast-demo-button" data-toast-type="warning">
+              Show Warning Toast
+            </button>
+          </div>
+        </TextReveal>
+
+        <TextReveal delay={300}>
+          <div class="toast-example">
+            <h3>Info Toast</h3>
+            <p>Blue toast for information</p>
+            <button class="toast-demo-button" data-toast-type="info"> Show Info Toast </button>
+          </div>
+        </TextReveal>
+
+        <TextReveal delay={400}>
+          <div class="toast-example">
+            <h3>Long Duration</h3>
+            <p>Toast that stays for 10 seconds</p>
+            <button class="toast-demo-button" data-toast-type="success" data-duration="10000">
+              Show Long Toast
+            </button>
+          </div>
+        </TextReveal>
+
+        <TextReveal delay={500}>
+          <div class="toast-example">
+            <h3>No Auto-Close</h3>
+            <p>Toast that stays until dismissed</p>
+            <button class="toast-demo-button" data-toast-type="info" data-duration="0">
+              Show Persistent Toast
+            </button>
+          </div>
+        </TextReveal>
+      </div>
+
+      <div class="toast-positions">
+        <TextReveal delay={600}>
+          <h2 class="section-title">Different Positions</h2>
+        </TextReveal>
+        <div class="position-buttons">
+          <button class="position-button" data-position="top-left">Top Left</button>
+          <button class="position-button" data-position="top-center">Top Center</button>
+          <button class="position-button" data-position="top-right">Top Right</button>
+          <button class="position-button" data-position="bottom-left">Bottom Left</button>
+          <button class="position-button" data-position="bottom-center">Bottom Center</button>
+          <button class="position-button" data-position="bottom-right">Bottom Right</button>
+        </div>
+      </div>
+    </ScrollSection>
+  </main>
+</Layout>
+
+<script>
+  import { toastSuccess, toastError, toastWarning, toastInfo, showToast } from '../utils/toast';
+  import { siteConfig } from '../config/site';
+
+  // Handle toast buttons
+  document.querySelectorAll('.toast-demo-button').forEach(button => {
+    button.addEventListener('click', () => {
+      const type = button.getAttribute('data-toast-type') as
+        | 'success'
+        | 'error'
+        | 'warning'
+        | 'info';
+      const duration = parseInt(
+        button.getAttribute('data-duration') || siteConfig.toast.defaultDuration.toString()
+      );
+
+      const toastFunctions = {
+        success: toastSuccess,
+        error: toastError,
+        warning: toastWarning,
+        info: toastInfo,
+      };
+
+      toastFunctions[type](siteConfig.toast.messages[type], {
+        duration,
+        position: siteConfig.toast.defaultPosition as
+          | 'top-right'
+          | 'top-left'
+          | 'bottom-right'
+          | 'bottom-left'
+          | 'top-center'
+          | 'bottom-center',
+        showIcon: siteConfig.toast.defaultShowIcon,
+        showProgress: siteConfig.toast.defaultShowProgress,
+        dismissible: siteConfig.toast.defaultDismissible,
+      });
+    });
+  });
+
+  // Handle position buttons
+  document.querySelectorAll('.position-button').forEach(button => {
+    button.addEventListener('click', () => {
+      const position = button.getAttribute('data-position');
+      showToast({
+        message: `Toast from ${position?.replace('-', ' ')}!`,
+        type: 'info',
+        position: position as
+          | 'top-right'
+          | 'top-left'
+          | 'bottom-right'
+          | 'bottom-left'
+          | 'top-center'
+          | 'bottom-center',
+        duration: siteConfig.toast.defaultDuration,
+        showIcon: siteConfig.toast.defaultShowIcon,
+        showProgress: siteConfig.toast.defaultShowProgress,
+        dismissible: siteConfig.toast.defaultDismissible,
+      });
+    });
+  });
+</script>
+
+<style>
+  .toast-showcase {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    padding: 2rem;
+  }
+
+  .toast-example {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 2rem;
+    text-align: center;
+  }
+
+  .toast-example h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.3rem;
+    color: white;
+    font-weight: 600;
+  }
+
+  .toast-example p {
+    margin: 0 0 1.5rem 0;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+  }
+
+  .toast-demo-button {
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease;
+    font-size: 1rem;
+    width: 100%;
+  }
+
+  .toast-demo-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  }
+
+  .toast-positions {
+    max-width: 1200px;
+    margin: 3rem auto 0;
+    padding: 2rem;
+    text-align: center;
+  }
+
+  /* Typography styles are in typography.css */
+
+  .section-title {
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 700;
+    margin: 0 0 2rem 0;
+    color: var(--color-text-primary);
+  }
+
+  .position-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+  }
+
+  .position-button {
+    padding: 0.75rem 1.5rem;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    color: white;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .position-button:hover {
+    background: rgba(102, 126, 234, 0.3);
+    border-color: rgba(102, 126, 234, 0.5);
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 768px) {
+    .toast-showcase {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    .position-buttons {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+</style>

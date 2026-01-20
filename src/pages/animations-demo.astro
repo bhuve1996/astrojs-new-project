@@ -1,0 +1,61 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Button from '../components/Button.astro';
+import AnimatedButtonCSS from '../components/AnimatedButtonCSS.astro';
+import AnimatedButtonJS from '../components/AnimatedButtonJS.astro';
+import ScrollReveal from '../components/ScrollReveal.astro';
+---
+
+<Layout title="Animation Examples">
+  <main
+    style="
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    min-height: 100vh; 
+    padding: 4rem 2rem;
+    gap: 3rem;
+  "
+  >
+    <ScrollReveal>
+      <h1 style="font-size: 3rem; margin: 0; text-align: center;">Animation Examples</h1>
+    </ScrollReveal>
+
+    <section
+      style="
+      display: flex; 
+      flex-direction: column; 
+      gap: 2rem; 
+      max-width: 600px; 
+      width: 100%;
+    "
+    >
+      <ScrollReveal delay={100}>
+        <div style="text-align: center;">
+          <h2 style="font-size: 1.5rem; margin-bottom: 1rem;">1. Original Button</h2>
+          <Button text="Original" />
+        </div>
+      </ScrollReveal>
+
+      <ScrollReveal delay={200}>
+        <div style="text-align: center;">
+          <h2 style="font-size: 1.5rem; margin-bottom: 1rem;">2. CSS Animations</h2>
+          <p style="color: #888; font-size: 0.9rem; margin-bottom: 1rem;">
+            Pure CSS - no JavaScript needed!
+          </p>
+          <AnimatedButtonCSS text="CSS Animated" />
+        </div>
+      </ScrollReveal>
+
+      <ScrollReveal delay={300}>
+        <div style="text-align: center;">
+          <h2 style="font-size: 1.5rem; margin-bottom: 1rem;">3. Web Animations API</h2>
+          <p style="color: #888; font-size: 0.9rem; margin-bottom: 1rem;">
+            Vanilla JavaScript - native browser API, no dependencies
+          </p>
+          <AnimatedButtonJS text="JS Animated" />
+        </div>
+      </ScrollReveal>
+    </section>
+  </main>
+</Layout>

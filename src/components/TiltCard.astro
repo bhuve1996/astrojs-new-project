@@ -1,0 +1,136 @@
+---
+// 3D Tilt Card with perspective
+interface Props {
+  title?: string;
+  content?: string;
+  image?: string;
+}
+
+const { title = 'Tilt Card', content = 'Tilt me with your mouse!', image = '' } = Astro.props;
+---
+
+<div class="tilt-card" id="tilt-card">
+  <div class="tilt-card-inner">
+    {
+      image && (
+        <div class="tilt-card-image">
+          <img src={image} alt={title} />
+        </div>
+      )
+    }
+    <div class="tilt-card-content">
+      <h3>{title}</h3>
+      <p>{content}</p>
+    </div>
+    <div class="tilt-card-border"></div>
+  </div>
+</div>
+
+<script>
+  const card = document.getElementById('tilt-card');
+
+  if (card) {
+    card.addEventListener('mousemove', e => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+
+      const rotateX = (y - centerY) / 10;
+      const rotateY = (centerX - x) / 10;
+
+      card.style.setProperty('--rotate-x', `${rotateX}deg`);
+      card.style.setProperty('--rotate-y', `${rotateY}deg`);
+    });
+
+    card.addEventListener('mouseleave', () => {
+      card.style.setProperty('--rotate-x', '0deg');
+      card.style.setProperty('--rotate-y', '0deg');
+    });
+  }
+</script>
+
+<style>
+  .tilt-card {
+    width: 100%;
+    height: 350px;
+    perspective: 1000px;
+    cursor: pointer;
+  }
+
+  .tilt-card-inner {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.1s ease-out;
+    transform: rotateX(var(--rotate-x, 0deg)) rotateY(var(--rotate-y, 0deg));
+  }
+
+  .tilt-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    padding: 2rem;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  }
+
+  .tilt-card-image {
+    width: 100%;
+    height: 60%;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+    transform: translateZ(20px);
+  }
+
+  .tilt-card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .tilt-card-content {
+    transform: translateZ(30px);
+  }
+
+  .tilt-card-content h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+  }
+
+  .tilt-card-content p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.6;
+  }
+
+  .tilt-card-border {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 20px;
+    padding: 2px;
+    background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+
+  .tilt-card:hover .tilt-card-border {
+    opacity: 1;
+  }
+</style>

@@ -1,0 +1,44 @@
+---
+// Reusable Content Section Component - DRY Principle
+import ScrollSection from './ScrollSection.astro';
+import TextReveal from './TextReveal.astro';
+import { getImagePath } from '../config/site';
+
+interface Props {
+  id?: string;
+  title?: string;
+  text?: string;
+  backgroundImage?: string;
+  backgroundColor?: string;
+  stickyBackground?: boolean;
+  children?: unknown;
+}
+
+const {
+  id = '',
+  title = '',
+  text = '',
+  backgroundImage = '',
+  backgroundColor = '#0a0e1a',
+  stickyBackground = false,
+} = Astro.props;
+---
+
+<ScrollSection
+  id={id}
+  backgroundImage={backgroundImage ? getImagePath(backgroundImage) : undefined}
+  backgroundColor={backgroundColor}
+  stickyBackground={stickyBackground}
+>
+  {title && (
+    <TextReveal delay={0}>
+      <h2 class="section-title">{title}</h2>
+    </TextReveal>
+  )}
+  {text && (
+    <TextReveal delay={200}>
+      <p class="section-text">{text}</p>
+    </TextReveal>
+  )}
+  <slot />
+</ScrollSection>

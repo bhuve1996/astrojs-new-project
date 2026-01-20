@@ -1,0 +1,161 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ScrollSection from '../components/ScrollSection.astro';
+import TextReveal from '../components/TextReveal.astro';
+import FlipCard from '../components/FlipCard.astro';
+import MagneticCard from '../components/MagneticCard.astro';
+import GlitchText from '../components/GlitchText.astro';
+import GlassCard from '../components/GlassCard.astro';
+import TiltCard from '../components/TiltCard.astro';
+import HoverRevealCard from '../components/HoverRevealCard.astro';
+import ParticleButton from '../components/ParticleButton.astro';
+import { siteConfig, getImagePath } from '../config/site';
+---
+
+<Layout title="Component Showcase" description="Explore cool animated components and interactions">
+  <main class="scroll-container">
+    <!-- Hero Section -->
+    <ScrollSection id="showcase-hero" backgroundColor="#0a0e1a">
+      <TextReveal delay={0}>
+        <GlitchText text={siteConfig.components.hero.title} size="large" />
+      </TextReveal>
+      <TextReveal delay={200}>
+        <p class="hero-subtitle">{siteConfig.components.hero.subtitle}</p>
+      </TextReveal>
+    </ScrollSection>
+
+    <!-- Flip Cards -->
+    <ScrollSection id="flip-cards" backgroundColor="#1a1f2e">
+      <TextReveal delay={0}>
+        <h2 class="section-title">3D Flip Cards</h2>
+      </TextReveal>
+      <div class="components-grid">
+        {
+          siteConfig.components.flipCards.map(card => (
+            <FlipCard
+              frontTitle={card.frontTitle}
+              frontContent={card.frontContent}
+              backTitle={card.backTitle}
+              backContent={card.backContent}
+              image={getImagePath(card.image)}
+              flipOn={card.flipOn as 'hover' | 'click' | undefined}
+            />
+          ))
+        }
+      </div>
+    </ScrollSection>
+
+    <!-- Magnetic Cards -->
+    <ScrollSection id="magnetic-cards" backgroundColor="#0a0e1a">
+      <TextReveal delay={0}>
+        <h2 class="section-title">Magnetic Cards</h2>
+      </TextReveal>
+      <div class="components-grid">
+        {
+          siteConfig.components.magneticCards.map(card => (
+            <MagneticCard
+              title={card.title}
+              content={card.content}
+              image={getImagePath(card.image)}
+            />
+          ))
+        }
+      </div>
+    </ScrollSection>
+
+    <!-- Glass Cards -->
+    <ScrollSection id="glass-cards" backgroundColor="#1a1f2e">
+      <TextReveal delay={0}>
+        <h2 class="section-title">Glassmorphism Cards</h2>
+      </TextReveal>
+      <div class="components-grid">
+        {
+          siteConfig.components.glassCards.map(card => (
+            <GlassCard title={card.title} content={card.content} image={getImagePath(card.image)} />
+          ))
+        }
+      </div>
+    </ScrollSection>
+
+    <!-- Tilt Cards -->
+    <ScrollSection id="tilt-cards" backgroundColor="#0a0e1a">
+      <TextReveal delay={0}>
+        <h2 class="section-title">3D Tilt Cards</h2>
+      </TextReveal>
+      <div class="components-grid">
+        {
+          siteConfig.components.tiltCards.map(card => (
+            <TiltCard title={card.title} content={card.content} image={getImagePath(card.image)} />
+          ))
+        }
+      </div>
+    </ScrollSection>
+
+    <!-- Hover Reveal Cards -->
+    <ScrollSection id="hover-reveal" backgroundColor="#1a1f2e">
+      <TextReveal delay={0}>
+        <h2 class="section-title">Hover Reveal Cards</h2>
+      </TextReveal>
+      <div class="components-grid">
+        {
+          siteConfig.components.hoverRevealCards.map(card => (
+            <HoverRevealCard
+              title={card.title}
+              content={card.content}
+              revealContent={card.revealContent}
+              image={getImagePath(card.image)}
+            />
+          ))
+        }
+      </div>
+    </ScrollSection>
+
+    <!-- Particle Button -->
+    <ScrollSection id="particle-button" backgroundColor="#0a0e1a">
+      <TextReveal delay={0}>
+        <h2 class="section-title">Particle Button</h2>
+      </TextReveal>
+      <TextReveal delay={200}>
+        <p class="section-text">Click the button to see particle explosion effect</p>
+      </TextReveal>
+      <div class="button-showcase">
+        <ParticleButton text="Explore Space" href="/" />
+        <ParticleButton text="View Components" href="/components-showcase" />
+        <ParticleButton text="Contact Us" href="/contact" />
+      </div>
+    </ScrollSection>
+  </main>
+</Layout>
+
+<style>
+  .components-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 3rem auto 0;
+    padding: 0 2rem;
+  }
+
+  /* Typography styles are in typography.css */
+
+  .button-showcase {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+  }
+
+  @media (max-width: 768px) {
+    .components-grid {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    .button-showcase {
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+</style>

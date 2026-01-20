@@ -1,0 +1,102 @@
+---
+// Particle Button with click effect
+interface Props {
+  text?: string;
+  href?: string;
+}
+
+const { text = 'Click Me', href = '#' } = Astro.props;
+---
+
+<a href={href} class="particle-button" id="particle-btn">
+  <span class="particle-button-text">{text}</span>
+  <span class="particle-button-particles"></span>
+</a>
+
+<script>
+  const button = document.getElementById('particle-btn');
+
+  if (button) {
+    button.addEventListener('click', e => {
+      const rect = button.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      // Create particles
+      for (let i = 0; i < 20; i++) {
+        const particle = document.createElement('span');
+        particle.className = 'particle';
+        particle.style.left = `${x}px`;
+        particle.style.top = `${y}px`;
+        particle.style.setProperty('--random-x', String((Math.random() - 0.5) * 200));
+        particle.style.setProperty('--random-y', String((Math.random() - 0.5) * 200));
+        particle.style.setProperty('--random-delay', String(Math.random() * 0.5));
+
+        button.appendChild(particle);
+
+        setTimeout(() => {
+          particle.remove();
+        }, 1000);
+      }
+    });
+  }
+</script>
+
+<style>
+  .particle-button {
+    display: inline-block;
+    padding: 1rem 2.5rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 50px;
+    color: white;
+    font-weight: 600;
+    font-size: 1rem;
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  }
+
+  .particle-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+  }
+
+  .particle-button:active {
+    transform: translateY(0);
+  }
+
+  .particle-button-text {
+    position: relative;
+    z-index: 2;
+  }
+
+  .particle {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: white;
+    border-radius: 50%;
+    pointer-events: none;
+    animation: particle-explode 1s ease-out forwards;
+    animation-delay: var(--random-delay, 0s);
+    left: var(--random-x, 0);
+    top: var(--random-y, 0);
+  }
+
+  @keyframes particle-explode {
+    0% {
+      opacity: 1;
+      transform: translate(0, 0) scale(1);
+    }
+    100% {
+      opacity: 0;
+      transform: translate(var(--random-x, 0), var(--random-y, 0)) scale(0);
+    }
+  }
+</style>

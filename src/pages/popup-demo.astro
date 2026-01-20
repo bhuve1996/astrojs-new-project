@@ -1,0 +1,220 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ScrollSection from '../components/ScrollSection.astro';
+import TextReveal from '../components/TextReveal.astro';
+import Popup from '../components/Popup.astro';
+import { siteConfig, getImagePath } from '../config/site';
+---
+
+<Layout title="Popup Demo" description="Interactive popup and modal demonstrations">
+  <main class="scroll-container">
+    <ScrollSection id="popup-hero" backgroundColor="#0a0e1a">
+      <TextReveal delay={0}>
+        <h1 class="page-title">Interactive Popups</h1>
+      </TextReveal>
+      <TextReveal delay={200}>
+        <p class="page-subtitle">Click the buttons to see different popup styles</p>
+      </TextReveal>
+    </ScrollSection>
+
+    <ScrollSection id="popup-examples" backgroundColor="#1a1f2e">
+      <div class="popup-showcase">
+        {
+          siteConfig.popup.examples.map((popup, index) => (
+            <TextReveal delay={index * 100}>
+              <div class="popup-example">
+                <h3>
+                  {popup.type === 'image' ? 'Image Popup' : 'Info Popup'} ({popup.size})
+                </h3>
+                <Popup
+                  id={popup.id}
+                  title={popup.title}
+                  content={popup.content}
+                  image={popup.image ? getImagePath(popup.image) : undefined}
+                  type={popup.type as 'info' | 'image' | 'form' | 'custom'}
+                  size={popup.size as 'small' | 'medium' | 'large' | 'fullscreen'}
+                  trigger={siteConfig.popup.defaultTrigger as 'click' | 'hover' | 'auto'}
+                  showClose={siteConfig.popup.defaultShowClose}
+                >
+                  <button slot="trigger" class="popup-demo-button">
+                    {popup.type === 'image' ? siteConfig.popup.labels.viewImage : siteConfig.popup.labels.openPopup}
+                  </button>
+                </Popup>
+              </div>
+            </TextReveal>
+          ))
+        }
+
+        <TextReveal delay={300}>
+          <div class="popup-example">
+            <h3>Hover Popup</h3>
+            <Popup
+              id="hover-popup-1"
+              title="Quick Info"
+              content="Hover over me to see a popup! Move your mouse away to close it."
+              type="info"
+              size="small"
+              trigger="hover"
+            >
+              <button class="hover-trigger">Hover Me</button>
+            </Popup>
+          </div>
+        </TextReveal>
+
+        <TextReveal delay={400}>
+          <div class="popup-example">
+            <h3>Custom Content Popup</h3>
+            <Popup
+              id="custom-popup-1"
+              title="Contact Form"
+              type="form"
+              size="medium"
+              trigger="click"
+            >
+              <button slot="trigger" class="popup-demo-button">Open Form</button>
+              <form class="popup-form">
+                <div class="form-group">
+                  <label>Name</label>
+                  <input type="text" placeholder="Your name" />
+                </div>
+                <div class="form-group">
+                  <label>Email</label>
+                  <input type="email" placeholder="your@email.com" />
+                </div>
+                <div class="form-group">
+                  <label>Message</label>
+                  <textarea placeholder="Your message" rows="4"></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Send Message</button>
+              </form>
+            </Popup>
+          </div>
+        </TextReveal>
+      </div>
+    </ScrollSection>
+  </main>
+</Layout>
+
+<style>
+  .popup-showcase {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    padding: 2rem;
+  }
+
+  .popup-example {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 2rem;
+    text-align: center;
+  }
+
+  .popup-example h3 {
+    margin: 0 0 1.5rem 0;
+    font-size: 1.3rem;
+    color: white;
+    font-weight: 600;
+  }
+
+  .hover-trigger {
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+  }
+
+  .hover-trigger:hover {
+    transform: translateY(-2px);
+  }
+
+  .popup-demo-button {
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease;
+    font-size: 1rem;
+  }
+
+  .popup-demo-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  }
+
+  .popup-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .form-group label {
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 500;
+    font-size: 0.9rem;
+  }
+
+  .form-group input,
+  .form-group textarea {
+    padding: 0.75rem 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: white;
+    font-size: 1rem;
+    font-family: inherit;
+    transition: border-color 0.3s ease;
+  }
+
+  .form-group input:focus,
+  .form-group textarea:focus {
+    outline: none;
+    border-color: #667eea;
+  }
+
+  .submit-btn {
+    padding: 0.75rem 2rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+
+  .submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  }
+
+  @media (max-width: 768px) {
+    .popup-showcase {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+  }
+</style>
