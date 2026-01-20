@@ -47,7 +47,6 @@ const rightItems = navItems.slice(2, 4);
     }
   </div>
 
-  <!-- Social Icons (shown when menu is closed or collapsed) -->
   <!-- Left Social Icons -->
   <div class="social-icons social-icons-left">
     <a
@@ -57,7 +56,7 @@ const rightItems = navItems.slice(2, 4);
       class="social-icon"
       aria-label={siteConfig.contact.social.twitter.label}
     >
-      <Fragment set:html={siteConfig.contact.social.twitter.icon} />
+      <span set:html={siteConfig.contact.social.twitter.icon} />
     </a>
     <a
       href={siteConfig.contact.social.linkedin.url}
@@ -66,7 +65,7 @@ const rightItems = navItems.slice(2, 4);
       class="social-icon"
       aria-label={siteConfig.contact.social.linkedin.label}
     >
-      <Fragment set:html={siteConfig.contact.social.linkedin.icon} />
+      <span set:html={siteConfig.contact.social.linkedin.icon} />
     </a>
   </div>
 
@@ -79,7 +78,7 @@ const rightItems = navItems.slice(2, 4);
       class="social-icon"
       aria-label={siteConfig.contact.social.github.label}
     >
-      <Fragment set:html={siteConfig.contact.social.github.icon} />
+      <span set:html={siteConfig.contact.social.github.icon} />
     </a>
     <a
       href={siteConfig.contact.social.instagram.url}
@@ -88,67 +87,63 @@ const rightItems = navItems.slice(2, 4);
       class="social-icon"
       aria-label={siteConfig.contact.social.instagram.label}
     >
-      <Fragment set:html={siteConfig.contact.social.instagram.icon} />
+      <span set:html={siteConfig.contact.social.instagram.icon} />
     </a>
   </div>
 </div>
 
 <script>
-  try {
-    const menuButton = document.getElementById('bottom-menu-btn');
-    const bottomMenu = document.querySelector('.bottom-menu');
+  const menuButton = document.getElementById('bottom-menu-btn');
+  const bottomMenu = document.querySelector('.bottom-menu');
+  
+  if (menuButton && bottomMenu) {
+    const isCollapsed = bottomMenu.getAttribute('data-collapsed') === 'true';
     
-    if (!menuButton || !bottomMenu) {
-      console.warn('Bottom menu elements not found');
-      return;
-    }
-
-    const isCollapsed = bottomMenu?.getAttribute('data-collapsed') === 'true';
-    // If collapsed, show social icons by default, menu items on click/hover
     if (isCollapsed) {
       bottomMenu.classList.add('collapsed');
     }
 
+    let hoverTimeout: ReturnType<typeof setTimeout> | null = null;
+    let closeTimeout: ReturnType<typeof setTimeout> | null = null;
+
+    // Click toggle
     menuButton.addEventListener('click', () => {
       bottomMenu.classList.toggle('open');
     });
 
-    // Also open on hover (with delay for smoother experience)
-    let hoverTimeout: number | null = null;
-    menuButton.addEventListener('mouseenter', function() {
-      hoverTimeout = window.setTimeout(function() {
-        bottomMenu.classList.add('open');
-      }, 200); // 200ms delay before opening
-    });
-    
-    menuButton.addEventListener('mouseleave', function() {
-      if (hoverTimeout) {
-        clearTimeout(hoverTimeout);
-        hoverTimeout = null;
+    // Hover to open (with delay)
+    menuButton.addEventListener('mouseenter', () => {
+      if (closeTimeout) {
+        clearTimeout(closeTimeout);
+        closeTimeout = null;
       }
+      hoverTimeout = setTimeout(() => {
+        bottomMenu.classList.add('open');
+      }, 200);
     });
 
     // Keep open when hovering over menu items
     const menuItems = bottomMenu.querySelectorAll('.menu-item');
-    let menuHoverTimeout: number | null = null;
-    
-    menuItems.forEach(function(item) {
-      item.addEventListener('mouseenter', function() {
-        if (menuHoverTimeout) {
-          clearTimeout(menuHoverTimeout);
+    menuItems.forEach((item) => {
+      item.addEventListener('mouseenter', () => {
+        if (closeTimeout) {
+          clearTimeout(closeTimeout);
+          closeTimeout = null;
         }
         bottomMenu.classList.add('open');
       });
     });
 
-    // Close when mouse leaves the menu area (with delay)
-    bottomMenu.addEventListener('mouseleave', function() {
-      menuHoverTimeout = window.setTimeout(function() {
+    // Close when mouse leaves menu area
+    bottomMenu.addEventListener('mouseleave', () => {
+      if (hoverTimeout) {
+        clearTimeout(hoverTimeout);
+        hoverTimeout = null;
+      }
+      closeTimeout = setTimeout(() => {
         bottomMenu.classList.remove('open');
-      }, 300); // 300ms delay before closing
+      }, 300);
     });
-  } catch (error) {
-    console.error('Error initializing bottom menu:', error);
   }
 </script>
 
@@ -162,14 +157,14 @@ const rightItems = navItems.slice(2, 4);
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 1.5rem;
-    transition: all 0.3s ease;
+    gap: 0; /* Remove gap, use margins instead */
     width: 100%;
     max-width: 100vw;
     padding: 0 1rem;
     box-sizing: border-box;
   }
 
+  /* Menu Button */
   .menu-button {
     width: 56px;
     height: 56px;
@@ -186,7 +181,6 @@ const rightItems = navItems.slice(2, 4);
     transition: all 0.3s ease;
     box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
     flex-shrink: 0;
-    position: relative;
     z-index: 100;
     order: 2;
   }
@@ -204,39 +198,35 @@ const rightItems = navItems.slice(2, 4);
     transition: all 0.3s ease;
   }
 
+  /* Menu Items Container */
   .menu-items {
     display: flex;
     gap: 0.75rem;
-    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-    position: relative;
+    transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     z-index: 10;
   }
 
   .menu-left {
-    flex-direction: row;
-    order: 1;
-    margin-right: 1.5rem;
+    order: 1; /* Same as social-icons-left, but display:none when closed */
   }
 
   .menu-right {
-    flex-direction: row;
-    order: 3;
-    margin-left: 1.5rem;
+    order: 3; /* Same as social-icons-right, but display:none when closed */
   }
 
+  /* Menu Item */
   .menu-item {
     padding: 0.75rem 1.5rem;
-    background: rgba(255, 255, 255, 0);
+    background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 50px;
     color: white;
     text-decoration: none;
     font-weight: 500;
     font-size: 0.9rem;
     white-space: nowrap;
-    transition: background 0.4s ease, border-color 0.4s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease, box-shadow 0.3s ease;
-    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     cursor: pointer;
   }
 
@@ -247,31 +237,23 @@ const rightItems = navItems.slice(2, 4);
     box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
   }
 
-  .menu-item:active {
-    transform: translateY(-1px) scale(1.02);
-  }
-
+  /* Social Icons Container */
   .social-icons {
-    position: relative;
     display: flex;
     gap: 0.75rem;
-    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-    pointer-events: auto;
+    transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     z-index: 10;
   }
 
   .social-icons-left {
-    order: 1;
-    flex-direction: row;
-    margin-right: 1.5rem;
+    order: 1; /* Left side - before button */
   }
 
   .social-icons-right {
-    order: 3;
-    flex-direction: row;
-    margin-left: 1.5rem;
+    order: 3; /* Right side - after button */
   }
 
+  /* Social Icon */
   .social-icon {
     width: 36px;
     height: 36px;
@@ -295,17 +277,16 @@ const rightItems = navItems.slice(2, 4);
     box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
   }
 
-  .social-icon:active {
-    transform: translateY(-1px) scale(1.05);
-  }
-
-  /* Default state - hide menu items, show social icons */
+  /* Default State: Hide menu items, show social icons */
   .menu-items {
     opacity: 0;
     pointer-events: none;
-    transform: translateX(0) scale(0.8);
+    transform: scale(0.8);
     width: 0;
+    max-width: 0;
     overflow: hidden;
+    margin: 0;
+    gap: 0;
   }
 
   .social-icons {
@@ -314,44 +295,82 @@ const rightItems = navItems.slice(2, 4);
     transform: scale(1);
   }
 
-  /* When menu is open (hover/click) - show menu items, hide social icons */
+  .social-icons-left {
+    margin-right: 1.5rem;
+  }
+
+  .social-icons-right {
+    margin-left: 1.5rem;
+  }
+
+  /* Open State: Show menu items, hide social icons */
   .bottom-menu.open .menu-items {
     opacity: 1;
     pointer-events: auto;
-    transform: translateX(0) scale(1);
+    transform: scale(1);
     width: auto;
+    max-width: none;
     overflow: visible;
-    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    gap: 0.75rem;
+    margin: 0;
+  }
+
+  .bottom-menu.open .menu-left {
+    margin-right: 1.5rem;
+  }
+
+  .bottom-menu.open .menu-right {
+    margin-left: 1.5rem;
   }
 
   .bottom-menu.open .menu-item {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.2);
-    opacity: 1;
-    transition: background 0.5s ease 0.2s, border-color 0.5s ease 0.2s, transform 0.3s ease, opacity 0.4s ease 0.1s;
+    animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation-delay: var(--delay, 0s);
+  }
+
+  .bottom-menu.open .menu-left .menu-item {
+    animation-name: slideInLeft;
+  }
+
+  .bottom-menu.open .menu-right .menu-item {
+    animation-name: slideInRight;
   }
 
   .bottom-menu.open .social-icons {
     opacity: 0;
     pointer-events: none;
     transform: scale(0.8);
-    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    width: 0;
+    max-width: 0;
+    overflow: hidden;
+    margin: 0;
+    gap: 0;
   }
 
-  .bottom-menu.open .menu-left .menu-item {
-    animation: slideInLeft 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    animation-delay: var(--delay, 0s);
+  .bottom-menu.open .social-icons-left {
+    margin-right: 0;
   }
 
-  .bottom-menu.open .menu-right .menu-item {
-    animation: slideInRight 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    animation-delay: var(--delay, 0s);
+  .bottom-menu.open .social-icons-right {
+    margin-left: 0;
+  }
+
+  /* Animations */
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(8px) scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
   }
 
   @keyframes slideInLeft {
     from {
       opacity: 0;
-      transform: translateX(20px) scale(0.8);
+      transform: translateX(15px) scale(0.9);
     }
     to {
       opacity: 1;
@@ -362,7 +381,7 @@ const rightItems = navItems.slice(2, 4);
   @keyframes slideInRight {
     from {
       opacity: 0;
-      transform: translateX(-20px) scale(0.8);
+      transform: translateX(-15px) scale(0.9);
     }
     to {
       opacity: 1;
@@ -370,7 +389,26 @@ const rightItems = navItems.slice(2, 4);
     }
   }
 
-  /* Responsive */
+  /* Responsive - Tablet */
+  @media (max-width: 1024px) and (min-width: 769px) {
+    .social-icons-left {
+      margin-right: 1rem;
+    }
+
+    .social-icons-right {
+      margin-left: 1rem;
+    }
+
+    .bottom-menu.open .menu-left {
+      margin-right: 1rem;
+    }
+
+    .bottom-menu.open .menu-right {
+      margin-left: 1rem;
+    }
+  }
+
+  /* Responsive - Mobile */
   @media (max-width: 768px) {
     .bottom-menu {
       bottom: 1rem;
@@ -378,43 +416,18 @@ const rightItems = navItems.slice(2, 4);
       right: 0;
       transform: none;
       padding: 0 0.5rem;
-      gap: 0.75rem;
-      justify-content: space-between;
-      max-width: 100vw;
+      justify-content: center;
     }
 
     .menu-button {
       width: 48px;
       height: 48px;
       order: 2;
-      flex-shrink: 0;
     }
 
     .menu-item {
-      padding: 0.5rem 1rem;
-      font-size: 0.8rem;
-      white-space: nowrap;
-    }
-
-    .menu-items {
-      gap: 0.5rem;
-      max-width: calc(50% - 40px);
-    }
-
-    .menu-left {
-      order: 1;
-      justify-content: flex-end;
-      margin-right: 0.75rem;
-    }
-
-    .menu-right {
-      order: 3;
-      justify-content: flex-start;
-      margin-left: 0.75rem;
-    }
-
-    .social-icons {
-      gap: 0.5rem;
+      padding: 0.6rem 1.2rem;
+      font-size: 0.85rem;
     }
 
     .social-icon {
@@ -424,14 +437,30 @@ const rightItems = navItems.slice(2, 4);
 
     .social-icons-left {
       order: 1;
-      justify-content: flex-end;
-      margin-right: 0.75rem;
+      margin-right: 0.5rem;
     }
 
     .social-icons-right {
       order: 3;
-      justify-content: flex-start;
-      margin-left: 0.75rem;
+      margin-left: 0.5rem;
+    }
+
+    .menu-left {
+      order: 1;
+      margin-right: 0.5rem;
+    }
+
+    .menu-right {
+      order: 3;
+      margin-left: 0.5rem;
+    }
+
+    .bottom-menu.open .menu-left {
+      margin-right: 0.5rem;
+    }
+
+    .bottom-menu.open .menu-right {
+      margin-left: 0.5rem;
     }
   }
 </style>
