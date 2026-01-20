@@ -4,26 +4,16 @@ import HeroSection from '../../components/HeroSection.astro';
 import ScrollSection from '../../components/ScrollSection.astro';
 import { siteConfig, getImagePath } from '../../config/site';
 
-// Get the post ID from the URL
-const { id } = Astro.params;
-let postId: number | null = null;
-
-try {
-  postId = id ? parseInt(id, 10) : null;
-  if (isNaN(postId as number)) {
-    postId = null;
-  }
-} catch (error) {
-  postId = null;
+// Generate static paths for all blog posts
+export async function getStaticPaths() {
+  return siteConfig.blog.posts.map((post) => ({
+    params: { id: post.id.toString() },
+    props: { post },
+  }));
 }
 
-// Find the post
-const post = postId ? siteConfig.blog.posts.find(p => p.id === postId) : null;
-
-// If post not found, return 404
-if (!post || !postId) {
-  return Astro.redirect('/404');
-}
+// Get the post from props
+const { post } = Astro.props;
 
 // Get full content from config (fallback to excerpt if content not provided)
 const fullContent = post.content || post.excerpt;

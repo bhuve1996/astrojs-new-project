@@ -92,59 +92,61 @@ const rightItems = navItems.slice(2, 4);
   </div>
 </div>
 
-<script>
-  const menuButton = document.getElementById('bottom-menu-btn');
-  const bottomMenu = document.querySelector('.bottom-menu');
-  
-  if (menuButton && bottomMenu) {
-    const isCollapsed = bottomMenu.getAttribute('data-collapsed') === 'true';
+<script is:inline>
+  (function() {
+    const menuButton = document.getElementById('bottom-menu-btn');
+    const bottomMenu = document.querySelector('.bottom-menu');
     
-    if (isCollapsed) {
-      bottomMenu.classList.add('collapsed');
-    }
-
-    let hoverTimeout: ReturnType<typeof setTimeout> | null = null;
-    let closeTimeout: ReturnType<typeof setTimeout> | null = null;
-
-    // Click toggle
-    menuButton.addEventListener('click', () => {
-      bottomMenu.classList.toggle('open');
-    });
-
-    // Hover to open (with delay)
-    menuButton.addEventListener('mouseenter', () => {
-      if (closeTimeout) {
-        clearTimeout(closeTimeout);
-        closeTimeout = null;
+    if (menuButton && bottomMenu) {
+      const isCollapsed = bottomMenu.getAttribute('data-collapsed') === 'true';
+      
+      if (isCollapsed) {
+        bottomMenu.classList.add('collapsed');
       }
-      hoverTimeout = setTimeout(() => {
-        bottomMenu.classList.add('open');
-      }, 200);
-    });
 
-    // Keep open when hovering over menu items
-    const menuItems = bottomMenu.querySelectorAll('.menu-item');
-    menuItems.forEach((item) => {
-      item.addEventListener('mouseenter', () => {
+      let hoverTimeout = null;
+      let closeTimeout = null;
+
+      // Click toggle
+      menuButton.addEventListener('click', function() {
+        bottomMenu.classList.toggle('open');
+      });
+
+      // Hover to open (with delay)
+      menuButton.addEventListener('mouseenter', function() {
         if (closeTimeout) {
           clearTimeout(closeTimeout);
           closeTimeout = null;
         }
-        bottomMenu.classList.add('open');
+        hoverTimeout = setTimeout(function() {
+          bottomMenu.classList.add('open');
+        }, 200);
       });
-    });
 
-    // Close when mouse leaves menu area
-    bottomMenu.addEventListener('mouseleave', () => {
-      if (hoverTimeout) {
-        clearTimeout(hoverTimeout);
-        hoverTimeout = null;
-      }
-      closeTimeout = setTimeout(() => {
-        bottomMenu.classList.remove('open');
-      }, 300);
-    });
-  }
+      // Keep open when hovering over menu items
+      const menuItems = bottomMenu.querySelectorAll('.menu-item');
+      menuItems.forEach(function(item) {
+        item.addEventListener('mouseenter', function() {
+          if (closeTimeout) {
+            clearTimeout(closeTimeout);
+            closeTimeout = null;
+          }
+          bottomMenu.classList.add('open');
+        });
+      });
+
+      // Close when mouse leaves menu area
+      bottomMenu.addEventListener('mouseleave', function() {
+        if (hoverTimeout) {
+          clearTimeout(hoverTimeout);
+          hoverTimeout = null;
+        }
+        closeTimeout = setTimeout(function() {
+          bottomMenu.classList.remove('open');
+        }, 300);
+      });
+    }
+  })();
 </script>
 
 <style>
